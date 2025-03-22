@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Notas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Gestor de Notas</h1>
+        <form id="note-form">
+            <input type="text" id="title" placeholder="Título" required>
+            <textarea id="content" placeholder="Contenido" required></textarea>
+            <button type="submit">Guardar Nota</button>
+        </form>
+        <h2>Notas Guardadas</h2>
+        <ul id="notes-list"></ul>
+    </div>
+
+    <script>
+        async function loadNotes() {
+            const response = await fetch("/notes");
+            const notes = await response.json();
+            const notesList = document.getElementById("notes-list");
+            notesList.innerHTML = notes.map(n => 
+                `<li><strong>${n.title}</strong>: ${n.content}</li>`).join("");
+        }
+
+        document.getElementById("note-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const title = document.getElementById("title").value;
+            const content = document.getElementById("content").value;
+
+            await fetch("/notes", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title, content })
+            });
+
+            document.getElementById("note-form").reset();
+            loadNotes();
+        });
+
+        loadNotes();
+    </script>
+</body>
+</html>
