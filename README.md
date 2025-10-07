@@ -8,10 +8,9 @@ A simple Flask application to create and manage notes using SQLite as the databa
 - **View Notes**: Displays a list of all the notes stored in the database.
 
 ## Requirements
-
-- Python 3.x
-- Flask
-- Flask-SQLAlchemy
+Flask==2.3.3
+Flask-SQLAlchemy==3.0.5
+Werkzeug==2.3.7
 
 ## Installation
 
