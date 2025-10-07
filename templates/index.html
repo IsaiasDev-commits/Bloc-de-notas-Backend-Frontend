@@ -3,46 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor de Notas</title>
+    <title>✨ NotesMaster - Gestor Avanzado de Notas</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Gestor de Notas</h1>
-        <form id="note-form">
-            <input type="text" id="title" placeholder="Título" required>
-            <textarea id="content" placeholder="Contenido" required></textarea>
-            <button type="submit">Guardar Nota</button>
-        </form>
-        <h2>Notas Guardadas</h2>
-        <ul id="notes-list"></ul>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1><i class="fas fa-sticky-note"></i> NotesMaster</h1>
+                <div class="header-stats">
+                    <span id="stats-counter" class="stats-badge">
+                        <i class="fas fa-chart-bar"></i>
+                        <span id="notes-count">0 notas</span>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-sliders-h"></i> Filtros</h3>
+                    <div class="filter-group">
+                        <input type="text" id="search-input" placeholder="🔍 Buscar notas..." class="search-input">
+                    </div>
+                    <div class="filter-group">
+                        <select id="category-filter" class="category-select">
+                            <option value="Todos">📁 Todas las categorías</option>
+                        </select>
+                    </div>
+                    <button id="clear-filters" class="clear-filters-btn">
+                        <i class="fas fa-times"></i> Limpiar filtros
+                    </button>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-plus"></i> Nueva Nota</h3>
+                    <button id="new-note-btn" class="new-note-btn">
+                        <i class="fas fa-plus-circle"></i> Crear Nueva Nota
+                    </button>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3><i class="fas fa-tags"></i> Categorías Rápidas</h3>
+                    <div class="quick-categories">
+                        <button class="category-tag" data-category="Trabajo">💼 Trabajo</button>
+                        <button class="category-tag" data-category="Personal">👤 Personal</button>
+                        <button class="category-tag" data-category="Estudio">📚 Estudio</button>
+                        <button class="category-tag" data-category="Ideas">💡 Ideas</button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Notes Area -->
+            <section class="notes-area">
+                <!-- Note Form -->
+                <div id="note-form-container" class="note-form-container hidden">
+                    <form id="note-form" class="note-form">
+                        <div class="form-header">
+                            <h3 id="form-title">📝 Nueva Nota</h3>
+                            <button type="button" id="close-form" class="close-btn">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="text" id="title" placeholder="Título de la nota..." required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <textarea id="content" placeholder="Escribe tu contenido aquí..." rows="6" required></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-tag"></i> Categoría</label>
+                                <select id="category">
+                                    <option value="General">📁 General</option>
+                                    <option value="Trabajo">💼 Trabajo</option>
+                                    <option value="Personal">👤 Personal</option>
+                                    <option value="Estudio">📚 Estudio</option>
+                                    <option value="Ideas">💡 Ideas</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label><i class="fas fa-palette"></i> Color</label>
+                                <div class="color-picker">
+                                    <input type="color" id="color" value="#3498db" class="color-input">
+                                    <span id="color-preview" class="color-preview"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-hashtag"></i> Etiquetas (separar con comas)</label>
+                            <input type="text" id="tags" placeholder="urgente, importante, proyecto...">
+                        </div>
+
+                        <div class="form-actions">
+                            <label class="pin-checkbox">
+                                <input type="checkbox" id="is-pinned">
+                                <span class="checkmark"></span>
+                                <i class="fas fa-thumbtack"></i> Fijar nota
+                            </label>
+                            <div class="action-buttons">
+                                <button type="button" id="cancel-btn" class="btn btn-secondary">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Guardar Nota
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Notes Grid -->
+                <div class="notes-grid" id="notes-grid">
+                    <div class="empty-state" id="empty-state">
+                        <i class="fas fa-sticky-note"></i>
+                        <h3>No hay notas aún</h3>
+                        <p>Crea tu primera nota haciendo clic en el botón "Crear Nueva Nota"</p>
+                    </div>
+                </div>
+            </section>
+        </main>
     </div>
 
-    <script>
-        async function loadNotes() {
-            const response = await fetch("/notes");
-            const notes = await response.json();
-            const notesList = document.getElementById("notes-list");
-            notesList.innerHTML = notes.map(n => 
-                `<li><strong>${n.title}</strong>: ${n.content}</li>`).join("");
-        }
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
 
-        document.getElementById("note-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const title = document.getElementById("title").value;
-            const content = document.getElementById("content").value;
-
-            await fetch("/notes", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title, content })
-            });
-
-            document.getElementById("note-form").reset();
-            loadNotes();
-        });
-
-        loadNotes();
-    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
