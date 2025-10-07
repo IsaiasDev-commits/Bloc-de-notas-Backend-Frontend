@@ -38,4 +38,5 @@ GET /notes: Retrieve all notes.
 
 POST /notes: Create a new note. Requires JSON data with title and content
 Screenshots:
-![image](https://github.com/user-attachments/assets/ed401d03-c385-4411-b975-e31a6c254741)
+<img width="1329" height="584" alt="image" src="https://github.com/user-attachments/assets/1f058b5c-1e85-440b-9803-9da9cf8fad77" />
+
